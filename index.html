@@ -12,17 +12,32 @@ body {
     background: white;
 }
 
+.controls {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+input {
+    margin: 5px;
+    padding: 6px;
+}
+
+button {
+    padding: 8px 18px;
+    cursor: pointer;
+}
+
 .receipt {
     width: 800px;
     margin: auto;
-    padding: 40px 60px;
+    padding: 60px 80px;
 }
 
 .title {
     text-align: center;
     font-size: 34px;
     letter-spacing: 2px;
-    margin-bottom: 40px;
+    margin-bottom: 50px;
 }
 
 .line {
@@ -37,10 +52,10 @@ body {
     padding: 0 8px;
 }
 
-.row-bottom {
+.bottom-row {
     display: flex;
     justify-content: space-between;
-    margin-top: 60px;
+    margin-top: 70px;
 }
 
 .left-bottom {
@@ -48,45 +63,31 @@ body {
 }
 
 .right-bottom {
-    text-align: center;
     position: relative;
     width: 200px;
+    text-align: center;
 }
 
 .stamp {
-    width: 120px;
+    width: 130px;
+}
+
+.signature-img {
     position: absolute;
-    top: -40px;
-    left: 40px;
+    top: 25px;
+    left: 35px;
+    width: 120px;
+    opacity: 0.9;
 }
 
 .signature-label {
-    margin-top: 100px;
+    margin-top: 10px;
     font-size: 18px;
-}
-
-canvas {
-    border: none;
-    border-bottom: 1px solid black;
-    margin-top: 80px;
-}
-
-.controls {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-input {
-    margin: 5px;
-    padding: 5px;
 }
 
 @media print {
     .controls {
         display: none;
-    }
-    body {
-        margin: 0;
     }
 }
 </style>
@@ -96,12 +97,12 @@ input {
 
 <div class="controls">
     <input type="text" id="driverName" placeholder="Driver Name">
-    <input type="number" id="amount" placeholder="Amount">
-    <input type="text" id="amountWords" placeholder="Amount in Words">
+    <input type="number" id="amount" placeholder="Amount" oninput="convertToWords()">
     <input type="text" id="employeeName" placeholder="Employee Name">
-    <input type="text" id="monthYear" placeholder="Month-Year">
+    <input type="text" id="monthYear" placeholder="Month-Year (May-2025)">
     <input type="text" id="place" placeholder="Place">
     <input type="date" id="date">
+    <input type="file" id="signatureUpload" accept="image/*">
     <br><br>
     <button onclick="generate()">Generate</button>
     <button onclick="downloadPDF()">Download PDF</button>
@@ -129,7 +130,7 @@ input {
         <span class="fill" id="rMonthYear"></span>.
     </div>
 
-    <div class="row-bottom">
+    <div class="bottom-row">
 
         <div class="left-bottom">
             <div>Place: <span class="fill" id="rPlace"></span></div>
@@ -140,11 +141,11 @@ input {
 
         <div class="right-bottom">
 
-            <!-- Embedded Stamp -->
-            <img class="stamp"
-            src="stamp.png">
+            <img src="stamp.png" class="stamp">
 
-            <canvas id="signature" width="200" height="80"></canvas>
+            <!-- Signature on top of stamp -->
+            <img id="signaturePreview" class="signature-img">
+
             <div class="signature-label">
                 SIGNATURE OF DRIVER
             </div>
@@ -157,42 +158,58 @@ input {
 
 <script>
 
+/* Generate Data */
 function generate() {
     rDriverName.textContent = driverName.value;
     rAmount.textContent = amount.value;
-    rAmountWords.textContent = amountWords.value;
     rEmployeeName.textContent = employeeName.value;
     rMonthYear.textContent = monthYear.value;
     rPlace.textContent = place.value;
     rDate.textContent = date.value;
 }
 
-/* Signature */
-const canvas = document.getElementById("signature");
-const ctx = canvas.getContext("2d");
-let drawing = false;
-
-canvas.addEventListener("mousedown", () => drawing = true);
-canvas.addEventListener("mouseup", () => {
-    drawing = false;
-    ctx.beginPath();
+/* Upload Signature */
+document.getElementById("signatureUpload").addEventListener("change", function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById("signaturePreview").src = e.target.result;
+        }
+        reader.readAsDataURL(file);
+    }
 });
-canvas.addEventListener("mousemove", draw);
 
-function draw(e) {
-    if (!drawing) return;
-    const rect = canvas.getBoundingClientRect();
-    ctx.lineWidth = 2;
-    ctx.lineCap = "round";
-    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+/* Convert Number to Indian Words */
+function convertToWords() {
+    const num = parseInt(amount.value);
+    if (!num) return;
+
+    const a = [
+        '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
+        'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen',
+        'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen',
+        'Nineteen'
+    ];
+    const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty',
+        'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+
+    function inWords(n) {
+        if (n < 20) return a[n];
+        if (n < 100) return b[Math.floor(n / 10)] + " " + a[n % 10];
+        if (n < 1000) return a[Math.floor(n / 100)] + " Hundred " + inWords(n % 100);
+        if (n < 100000) return inWords(Math.floor(n / 1000)) + " Thousand " + inWords(n % 1000);
+        if (n < 10000000) return inWords(Math.floor(n / 100000)) + " Lakh " + inWords(n % 100000);
+        return inWords(Math.floor(n / 10000000)) + " Crore " + inWords(n % 10000000);
+    }
+
+    rAmountWords.textContent = inWords(num) + " Only";
 }
 
-/* PDF */
+/* PDF Export */
 function downloadPDF() {
     const element = document.getElementById("receiptArea");
+
     html2pdf().set({
         margin: 0,
         filename: "Driver_Receipt.pdf",
