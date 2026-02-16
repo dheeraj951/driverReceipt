@@ -29,10 +29,7 @@ input {
     font-size: 18px;
     padding: 5px;
     outline: none;
-}
-
-.form-section {
-    margin-bottom: 30px;
+    margin: 5px;
 }
 
 button {
@@ -40,8 +37,6 @@ button {
     font-size: 16px;
     cursor: pointer;
 }
-
-/* Receipt Layout */
 
 .receipt {
     margin-top: 50px;
@@ -53,29 +48,24 @@ button {
     font-weight: bold;
 }
 
-.stamp-box {
-    border: 1px dashed gray;
-    width: 120px;
-    height: 150px;
-    text-align: center;
-    font-size: 12px;
-    padding-top: 50px;
-    margin-top: 10px;
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
 }
 
 .signature-area {
-    margin-top: 40px;
     text-align: center;
+    margin-top: 10px;
 }
 
 canvas {
     border: 1px solid black;
 }
 
-.row {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 40px;
+.stamp-image {
+    width: 120px;
+    height: auto;
 }
 
 @media print {
@@ -133,11 +123,11 @@ canvas {
             <p>Date: <span class="blue-text" id="rDate"></span></p>
         </div>
 
-        <div>
-            <div class="stamp-box">
-                AFFIX<br>REVENUE<br>STAMP HERE
-            </div>
-
+        <div style="text-align:center;">
+            
+            <!-- Embedded Stamp Image -->
+            <img src="stamp.png" class="stamp-image">
+            
             <div class="signature-area">
                 <canvas id="signaturePad" width="200" height="100"></canvas>
                 <p>SIGNATURE OF DRIVER</p>
@@ -163,7 +153,7 @@ function generateReceipt() {
     rDate.textContent = date.value;
 }
 
-/* Signature Draw */
+/* Signature */
 const canvas = document.getElementById("signaturePad");
 const ctx = canvas.getContext("2d");
 let drawing = false;
