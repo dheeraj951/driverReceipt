@@ -2,75 +2,91 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Driver Receipt Generator</title>
+<title>Driver Receipt</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
 body {
     font-family: "Times New Roman", serif;
-    padding: 40px;
-}
-
-.container {
-    max-width: 900px;
-    margin: auto;
-}
-
-h2 {
-    text-align: center;
-    font-size: 32px;
-    letter-spacing: 2px;
-}
-
-input {
-    border: none;
-    border-bottom: 1px solid black;
-    font-size: 18px;
-    padding: 5px;
-    outline: none;
-    margin: 5px;
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    cursor: pointer;
+    background: white;
 }
 
 .receipt {
-    margin-top: 50px;
-    padding: 20px;
+    width: 800px;
+    margin: auto;
+    padding: 40px 60px;
 }
 
-.blue-text {
+.title {
+    text-align: center;
+    font-size: 34px;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+}
+
+.line {
+    font-size: 20px;
+    margin-bottom: 18px;
+}
+
+.fill {
     color: #0b3d91;
     font-weight: bold;
+    border-bottom: 1px solid black;
+    padding: 0 8px;
 }
 
-.row {
+.row-bottom {
     display: flex;
     justify-content: space-between;
-    margin-top: 40px;
+    margin-top: 60px;
 }
 
-.signature-area {
+.left-bottom {
+    font-size: 18px;
+}
+
+.right-bottom {
     text-align: center;
-    margin-top: 10px;
+    position: relative;
+    width: 200px;
+}
+
+.stamp {
+    width: 120px;
+    position: absolute;
+    top: -40px;
+    left: 40px;
+}
+
+.signature-label {
+    margin-top: 100px;
+    font-size: 18px;
 }
 
 canvas {
-    border: 1px solid black;
+    border: none;
+    border-bottom: 1px solid black;
+    margin-top: 80px;
 }
 
-.stamp-image {
-    width: 120px;
-    height: auto;
+.controls {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+input {
+    margin: 5px;
+    padding: 5px;
 }
 
 @media print {
-    button, .form-section {
+    .controls {
         display: none;
+    }
+    body {
+        margin: 0;
     }
 }
 </style>
@@ -78,72 +94,70 @@ canvas {
 
 <body>
 
-<div class="container">
-
-<h2>DRIVER RECEIPT</h2>
-
-<div class="form-section">
+<div class="controls">
     <input type="text" id="driverName" placeholder="Driver Name">
     <input type="number" id="amount" placeholder="Amount">
     <input type="text" id="amountWords" placeholder="Amount in Words">
     <input type="text" id="employeeName" placeholder="Employee Name">
-    <input type="text" id="monthYear" placeholder="Month-Year (e.g. May-2025)">
+    <input type="text" id="monthYear" placeholder="Month-Year">
     <input type="text" id="place" placeholder="Place">
     <input type="date" id="date">
     <br><br>
-    <button onclick="generateReceipt()">Generate</button>
+    <button onclick="generate()">Generate</button>
     <button onclick="downloadPDF()">Download PDF</button>
 </div>
 
-<div id="receiptContent" class="receipt" style="display:none;">
+<div id="receiptArea" class="receipt">
 
-    <h2>DRIVER RECEIPT</h2>
+    <div class="title">DRIVER RECEIPT</div>
 
-    <p>
-        I <span class="blue-text" id="rDriverName"></span>
-        received sum of Rs 
-        <span class="blue-text" id="rAmount"></span> /-
-    </p>
-
-    <p>
-        (Rupees 
-        <span class="blue-text" id="rAmountWords"></span>
-        ) from
-    </p>
-
-    <p>
-        <span class="blue-text" id="rEmployeeName"></span>
-        as driver for the month of 
-        <span class="blue-text" id="rMonthYear"></span>.
-    </p>
-
-    <div class="row">
-        <div>
-            <p>Place: <span class="blue-text" id="rPlace"></span></p>
-            <p>Date: <span class="blue-text" id="rDate"></span></p>
-        </div>
-
-        <div style="text-align:center;">
-            
-            <!-- Embedded Stamp Image -->
-            <img src="stamp.png" class="stamp-image">
-            
-            <div class="signature-area">
-                <canvas id="signaturePad" width="200" height="100"></canvas>
-                <p>SIGNATURE OF DRIVER</p>
-            </div>
-        </div>
+    <div class="line">
+        I <span class="fill" id="rDriverName"></span>
+        received sum of Rs
+        <span class="fill" id="rAmount"></span> /-
     </div>
 
-</div>
+    <div class="line">
+        (Rupees
+        <span class="fill" id="rAmountWords"></span>)
+        from
+    </div>
+
+    <div class="line">
+        <span class="fill" id="rEmployeeName"></span>
+        as driver for the month of
+        <span class="fill" id="rMonthYear"></span>.
+    </div>
+
+    <div class="row-bottom">
+
+        <div class="left-bottom">
+            <div>Place: <span class="fill" id="rPlace"></span></div>
+            <div style="margin-top:15px;">
+                Date: <span class="fill" id="rDate"></span>
+            </div>
+        </div>
+
+        <div class="right-bottom">
+
+            <!-- Embedded Stamp -->
+            <img class="stamp"
+            src="stamp.png">
+
+            <canvas id="signature" width="200" height="80"></canvas>
+            <div class="signature-label">
+                SIGNATURE OF DRIVER
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
 <script>
 
-function generateReceipt() {
-    document.getElementById("receiptContent").style.display = "block";
-
+function generate() {
     rDriverName.textContent = driverName.value;
     rAmount.textContent = amount.value;
     rAmountWords.textContent = amountWords.value;
@@ -154,7 +168,7 @@ function generateReceipt() {
 }
 
 /* Signature */
-const canvas = document.getElementById("signaturePad");
+const canvas = document.getElementById("signature");
 const ctx = canvas.getContext("2d");
 let drawing = false;
 
@@ -178,8 +192,13 @@ function draw(e) {
 
 /* PDF */
 function downloadPDF() {
-    const element = document.getElementById("receiptContent");
-    html2pdf().from(element).save("Driver_Receipt.pdf");
+    const element = document.getElementById("receiptArea");
+    html2pdf().set({
+        margin: 0,
+        filename: "Driver_Receipt.pdf",
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    }).from(element).save();
 }
 
 </script>
