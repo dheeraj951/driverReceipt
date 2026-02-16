@@ -3,86 +3,94 @@
 <head>
 <meta charset="UTF-8">
 <title>Driver Receipt</title>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <style>
 body {
     font-family: "Times New Roman", serif;
-    background: white;
+    margin: 0;
 }
 
 .controls {
     text-align: center;
-    margin-bottom: 30px;
+    margin: 20px;
 }
 
 input {
-    margin: 5px;
     padding: 6px;
+    margin: 5px;
 }
 
 button {
-    padding: 8px 18px;
+    padding: 8px 16px;
     cursor: pointer;
 }
 
+.receipt-wrapper {
+    width: 210mm;
+    min-height: 297mm;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
 .receipt {
-    width: 800px;
-    margin: auto;
-    padding: 60px 80px;
+    width: 160mm;
+    margin-top: 40mm;
 }
 
 .title {
     text-align: center;
-    font-size: 34px;
-    letter-spacing: 2px;
-    margin-bottom: 50px;
+    font-size: 28px;
+    margin-bottom: 30px;
+    letter-spacing: 1px;
 }
 
 .line {
-    font-size: 20px;
-    margin-bottom: 18px;
+    font-size: 18px;
+    margin-bottom: 14px;
 }
 
 .fill {
     color: #0b3d91;
     font-weight: bold;
     border-bottom: 1px solid black;
-    padding: 0 8px;
+    padding: 0 6px;
 }
 
 .bottom-row {
     display: flex;
     justify-content: space-between;
-    margin-top: 70px;
+    align-items: flex-start;
+    margin-top: 50px;
 }
 
 .left-bottom {
-    font-size: 18px;
+    font-size: 16px;
+    line-height: 28px;
 }
 
 .right-bottom {
     position: relative;
-    width: 200px;
+    width: 120px;
     text-align: center;
 }
 
 .stamp {
-    width: 130px;
+    width: 110px;
 }
 
 .signature-img {
     position: absolute;
     top: 25px;
-    left: 35px;
-    width: 120px;
+    left: 5px;
+    width: 100px;
     opacity: 0.9;
 }
 
 .signature-label {
-    margin-top: 10px;
-    font-size: 18px;
+    margin-top: 8px;
+    font-size: 14px;
 }
 
 @media print {
@@ -96,11 +104,11 @@ button {
 <body>
 
 <div class="controls">
-    <input type="text" id="driverName" placeholder="Driver Name">
-    <input type="number" id="amount" placeholder="Amount" oninput="convertToWords()">
+    <input type="text" id="driverName" placeholder="Driver Name" value="Driver Name">
+    <input type="number" id="amount" value="10000" oninput="convertToWords()">
     <input type="text" id="employeeName" placeholder="Employee Name">
-    <input type="text" id="monthYear" placeholder="Month-Year (May-2025)">
-    <input type="text" id="place" placeholder="Place">
+    <input type="text" id="monthYear">
+    <input type="text" id="place">
     <input type="date" id="date">
     <input type="file" id="signatureUpload" accept="image/*">
     <br><br>
@@ -108,114 +116,137 @@ button {
     <button onclick="downloadPDF()">Download PDF</button>
 </div>
 
-<div id="receiptArea" class="receipt">
+<div id="receiptArea" class="receipt-wrapper">
 
-    <div class="title">DRIVER RECEIPT</div>
+    <div class="receipt">
 
-    <div class="line">
-        I <span class="fill" id="rDriverName"></span>
-        received sum of Rs
-        <span class="fill" id="rAmount"></span> /-
-    </div>
+        <div class="title">DRIVER RECEIPT</div>
 
-    <div class="line">
-        (Rupees
-        <span class="fill" id="rAmountWords"></span>)
-        from
-    </div>
-
-    <div class="line">
-        <span class="fill" id="rEmployeeName"></span>
-        as driver for the month of
-        <span class="fill" id="rMonthYear"></span>.
-    </div>
-
-    <div class="bottom-row">
-
-        <div class="left-bottom">
-            <div>Place: <span class="fill" id="rPlace"></span></div>
-            <div style="margin-top:15px;">
-                Date: <span class="fill" id="rDate"></span>
-            </div>
+        <div class="line">
+            I <span class="fill" id="rDriverName"></span>
+            received sum of Rs
+            <span class="fill" id="rAmount"></span> /-
         </div>
 
-        <div class="right-bottom">
+        <div class="line">
+            (Rupees
+            <span class="fill" id="rAmountWords"></span>)
+            from
+        </div>
 
-            <img src="stamp.png" class="stamp">
+        <div class="line">
+            <span class="fill" id="rEmployeeName"></span>
+            as driver for the month of
+            <span class="fill" id="rMonthYear"></span>.
+        </div>
 
-            <!-- Signature on top of stamp -->
-            <img id="signaturePreview" class="signature-img">
+        <div class="bottom-row">
 
-            <div class="signature-label">
-                SIGNATURE OF DRIVER
+            <div class="left-bottom">
+                Place: <span class="fill" id="rPlace"></span><br>
+                Date: <span class="fill" id="rDateDisplay"></span>
+            </div>
+
+            <div class="right-bottom">
+                <img src="stamp.png" class="stamp">
+                <img id="signaturePreview" class="signature-img">
+                <div class="signature-label">SIGNATURE OF DRIVER</div>
             </div>
 
         </div>
 
     </div>
-
 </div>
 
 <script>
 
-/* Generate Data */
+/* Default Values */
+window.onload = function() {
+    const today = new Date();
+
+    // Default Date
+    document.getElementById("date").valueAsDate = today;
+
+    // Default Month-Year
+    const options = { month: 'long', year: 'numeric' };
+    document.getElementById("monthYear").value =
+        today.toLocaleDateString('en-IN', options);
+
+    // Default Place
+    document.getElementById("place").value = "Hyderabad";
+
+    convertToWords();
+    generate();
+}
+
+/* Generate */
 function generate() {
     rDriverName.textContent = driverName.value;
     rAmount.textContent = amount.value;
     rEmployeeName.textContent = employeeName.value;
     rMonthYear.textContent = monthYear.value;
     rPlace.textContent = place.value;
-    rDate.textContent = date.value;
+
+    const selectedDate = new Date(date.value);
+    rDateDisplay.textContent =
+        selectedDate.toLocaleDateString('en-IN');
 }
 
 /* Upload Signature */
-document.getElementById("signatureUpload").addEventListener("change", function(event) {
+document.getElementById("signatureUpload")
+.addEventListener("change", function(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            document.getElementById("signaturePreview").src = e.target.result;
+            document.getElementById("signaturePreview").src =
+                e.target.result;
         }
         reader.readAsDataURL(file);
     }
 });
 
-/* Convert Number to Indian Words */
+/* Indian Number to Words */
 function convertToWords() {
+
     const num = parseInt(amount.value);
     if (!num) return;
 
-    const a = [
-        '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
-        'Eight', 'Nine', 'Ten', 'Eleven', 'Twelve', 'Thirteen',
-        'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen',
-        'Nineteen'
-    ];
+    const a = ['', 'One', 'Two', 'Three', 'Four', 'Five',
+        'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Eleven',
+        'Twelve', 'Thirteen', 'Fourteen', 'Fifteen',
+        'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+
     const b = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty',
         'Sixty', 'Seventy', 'Eighty', 'Ninety'];
 
-    function inWords(n) {
+    function words(n) {
         if (n < 20) return a[n];
-        if (n < 100) return b[Math.floor(n / 10)] + " " + a[n % 10];
-        if (n < 1000) return a[Math.floor(n / 100)] + " Hundred " + inWords(n % 100);
-        if (n < 100000) return inWords(Math.floor(n / 1000)) + " Thousand " + inWords(n % 1000);
-        if (n < 10000000) return inWords(Math.floor(n / 100000)) + " Lakh " + inWords(n % 100000);
-        return inWords(Math.floor(n / 10000000)) + " Crore " + inWords(n % 10000000);
+        if (n < 100)
+            return b[Math.floor(n / 10)] + " " + a[n % 10];
+        if (n < 1000)
+            return a[Math.floor(n / 100)] + " Hundred " + words(n % 100);
+        if (n < 100000)
+            return words(Math.floor(n / 1000)) +
+                " Thousand " + words(n % 1000);
+        if (n < 10000000)
+            return words(Math.floor(n / 100000)) +
+                " Lakh " + words(n % 100000);
+        return words(Math.floor(n / 10000000)) +
+            " Crore " + words(n % 10000000);
     }
 
-    rAmountWords.textContent = inWords(num) + " Only";
+    rAmountWords.textContent = words(num) + " Only";
 }
 
-/* PDF Export */
+/* PDF */
 function downloadPDF() {
-    const element = document.getElementById("receiptArea");
-
     html2pdf().set({
         margin: 0,
         filename: "Driver_Receipt.pdf",
         html2canvas: { scale: 2 },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    }).from(element).save();
+    }).from(document.getElementById("receiptArea")).save();
 }
 
 </script>
