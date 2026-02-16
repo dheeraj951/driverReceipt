@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Driver Receipt Generator</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+body {
+    font-family: "Times New Roman", serif;
+    padding: 40px;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+h2 {
+    text-align: center;
+    font-size: 32px;
+    letter-spacing: 2px;
+}
+
+input {
+    border: none;
+    border-bottom: 1px solid black;
+    font-size: 18px;
+    padding: 5px;
+    outline: none;
+}
+
+.form-section {
+    margin-bottom: 30px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Receipt Layout */
+
+.receipt {
+    margin-top: 50px;
+    padding: 20px;
+}
+
+.blue-text {
+    color: #0b3d91;
+    font-weight: bold;
+}
+
+.stamp-box {
+    border: 1px dashed gray;
+    width: 120px;
+    height: 150px;
+    text-align: center;
+    font-size: 12px;
+    padding-top: 50px;
+    margin-top: 10px;
+}
+
+.signature-area {
+    margin-top: 40px;
+    text-align: center;
+}
+
+canvas {
+    border: 1px solid black;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+}
+
+@media print {
+    button, .form-section {
+        display: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>DRIVER RECEIPT</h2>
+
+<div class="form-section">
+    <input type="text" id="driverName" placeholder="Driver Name">
+    <input type="number" id="amount" placeholder="Amount">
+    <input type="text" id="amountWords" placeholder="Amount in Words">
+    <input type="text" id="employeeName" placeholder="Employee Name">
+    <input type="text" id="monthYear" placeholder="Month-Year (e.g. May-2025)">
+    <input type="text" id="place" placeholder="Place">
+    <input type="date" id="date">
+    <br><br>
+    <button onclick="generateReceipt()">Generate</button>
+    <button onclick="downloadPDF()">Download PDF</button>
+</div>
+
+<div id="receiptContent" class="receipt" style="display:none;">
+
+    <h2>DRIVER RECEIPT</h2>
+
+    <p>
+        I <span class="blue-text" id="rDriverName"></span>
+        received sum of Rs 
+        <span class="blue-text" id="rAmount"></span> /-
+    </p>
+
+    <p>
+        (Rupees 
+        <span class="blue-text" id="rAmountWords"></span>
+        ) from
+    </p>
+
+    <p>
+        <span class="blue-text" id="rEmployeeName"></span>
+        as driver for the month of 
+        <span class="blue-text" id="rMonthYear"></span>.
+    </p>
+
+    <div class="row">
+        <div>
+            <p>Place: <span class="blue-text" id="rPlace"></span></p>
+            <p>Date: <span class="blue-text" id="rDate"></span></p>
+        </div>
+
+        <div>
+            <div class="stamp-box">
+                AFFIX<br>REVENUE<br>STAMP HERE
+            </div>
+
+            <div class="signature-area">
+                <canvas id="signaturePad" width="200" height="100"></canvas>
+                <p>SIGNATURE OF DRIVER</p>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+function generateReceipt() {
+    document.getElementById("receiptContent").style.display = "block";
+
+    rDriverName.textContent = driverName.value;
+    rAmount.textContent = amount.value;
+    rAmountWords.textContent = amountWords.value;
+    rEmployeeName.textContent = employeeName.value;
+    rMonthYear.textContent = monthYear.value;
+    rPlace.textContent = place.value;
+    rDate.textContent = date.value;
+}
+
+/* Signature Draw */
+const canvas = document.getElementById("signaturePad");
+const ctx = canvas.getContext("2d");
+let drawing = false;
+
+canvas.addEventListener("mousedown", () => drawing = true);
+canvas.addEventListener("mouseup", () => {
+    drawing = false;
+    ctx.beginPath();
+});
+canvas.addEventListener("mousemove", draw);
+
+function draw(e) {
+    if (!drawing) return;
+    const rect = canvas.getBoundingClientRect();
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+}
+
+/* PDF */
+function downloadPDF() {
+    const element = document.getElementById("receiptContent");
+    html2pdf().from(element).save("Driver_Receipt.pdf");
+}
+
+</script>
+
+</body>
+</html>
