@@ -64,31 +64,53 @@ button{
 .blank-from{ width:90mm; }
 .blank-month{ width:35mm; }
 
-.bottom-section{
-    margin-top:60px;
-}
+
 
 .place-date{
     font-size:16px;
     line-height:28px;
 }
-
-.sign-stamp-row{
+.bottom-row-final{
     display:flex;
     justify-content:space-between;
-    align-items:flex-end;
-    margin-top:20px;
+    margin-top:60px;
 }
 
-.left-col{
-    width:60%;
+.place-date{
+    width:50%;
+    font-size:16px;
+    line-height:28px;
 }
 
-.right-col{
-    width:120px;
+.sign-stamp-row{
+    width:50%;
+    text-align:right;
     position:relative;
-    text-align:center;
 }
+
+.stamp-wrapper{
+    position:relative;
+    display:inline-block;
+}
+
+.stamp{
+    width:110px;
+}
+
+.signature-img{
+    position:absolute;
+    top:30px;
+    left:-15px;
+    width:140px;
+    opacity:0.95;
+}
+
+.signature-label{
+    margin-top:10px;
+    font-size:16px;
+    white-space:nowrap;
+}
+
 
 .stamp{
     width:110px;
@@ -150,28 +172,27 @@ as driver for the month of
 <span class="blank blank-month" id="rMonthYear"></span>.
 </div>
 
-<div class="bottom-section">
+<div class="bottom-row-final">
 
-    <!-- Place above Date -->
+    <!-- LEFT 50% -->
     <div class="place-date">
         Place: <span class="blank blank-month" id="rPlace"></span><br>
         Date: <span class="blank blank-month" id="rDateDisplay"></span>
     </div>
 
+    <!-- RIGHT 50% -->
     <div class="sign-stamp-row">
-
-        <div class="left-col">
-        </div>
-
-        <div class="right-col">
+        <div class="stamp-wrapper">
             <img src="stamp.png" class="stamp">
             <img id="signaturePreview" class="signature-img">
-            <div class="signature-label">SIGNATURE OF DRIVER</div>
         </div>
-
+        <div class="signature-label">
+            SIGNATURE OF DRIVER
+        </div>
     </div>
 
 </div>
+
 
 </div>
 </div>
