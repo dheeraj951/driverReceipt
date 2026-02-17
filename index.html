@@ -61,8 +61,8 @@ button{
 .blank-name{ width:85mm; }
 .blank-amount{ width:30mm; text-align:center; }
 .blank-words{ width:134mm; }
-.blank-from{ width:90mm; }
-.blank-month{ width:35mm; }
+.blank-from{ width:64mm; }
+.blank-month{ width:43mm; }
 
 .bottom-row-final{
     display:flex;
@@ -86,18 +86,11 @@ button{
 .stamp-wrapper{
     position:relative;
     display:inline-block;
+    margin-right:34px;
 }
 
 .stamp{
     width:110px;
-}
-
-.signature-img{
-    position:absolute;
-    top:30px;
-    left:-15px;
-    width:140px;
-    opacity:0.95;
 }
 
 .signature-label{
@@ -114,8 +107,8 @@ button{
 .signature-img{
     position:absolute;
     top:30px;        /* start inside stamp middle */
-    left:-10px;      /* slightly outside left */
-    width:140px;     /* extend outside stamp */
+    left:21px;      /* slightly outside left */
+    width:163px;     /* extend outside stamp */
     opacity:0.95;
 }
 
@@ -133,7 +126,7 @@ button{
 <body>
 
 <div class="controls">
-    <input type="text" id="driverName" value="Driver Name">
+    <input type="text" id="driverName" value="" placeholder="Driver Name">
     <input type="number" id="amount" value="10000" oninput="convertToWords()">
     <input type="text" id="employeeName" placeholder="Employee Name">
     <input type="text" id="monthYear">
