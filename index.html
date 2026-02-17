@@ -28,14 +28,14 @@ button{
 
 .receipt-wrapper{
     width:210mm;
-    min-height:297mm;
+    min-height:267mm;
     display:flex;
     justify-content:center;
 }
 
 .receipt{
     width:170mm;
-    margin-top:40mm;
+    margin-top:31mm;
 }
 
 .title{
@@ -58,18 +58,12 @@ button{
     font-weight:bold;
 }
 
-.blank-name{ width:70mm; }
+.blank-name{ width:85mm; }
 .blank-amount{ width:30mm; text-align:center; }
-.blank-words{ width:95mm; }
+.blank-words{ width:134mm; }
 .blank-from{ width:90mm; }
 .blank-month{ width:35mm; }
 
-
-
-.place-date{
-    font-size:16px;
-    line-height:28px;
-}
 .bottom-row-final{
     display:flex;
     justify-content:space-between;
@@ -80,6 +74,7 @@ button{
     width:50%;
     font-size:16px;
     line-height:28px;
+    margin-top: 105px;
 }
 
 .sign-stamp-row{
@@ -164,10 +159,11 @@ received sum of Rs
 <div class="line">
 (Rupees <span class="blank blank-words" id="rAmountWords"></span>)
 from
-<span class="blank blank-from" id="rEmployeeName"></span>
+
 </div>
 
 <div class="line">
+    <span class="blank blank-from" id="rEmployeeName"></span>
 as driver for the month of
 <span class="blank blank-month" id="rMonthYear"></span>.
 </div>
