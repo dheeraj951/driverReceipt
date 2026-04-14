@@ -8,143 +8,143 @@
 <style>
 body{
     font-family: Arial, sans-serif;
-    margin: 0;
+    margin:0;
 }
 
 .controls{
-    text-align: center;
-    margin: 20px;
+    text-align:center;
+    margin:20px;
 }
 
 input{
-    padding: 6px;
-    margin: 5px;
-    width: 180px;
+    padding:6px;
+    margin:5px;
+    width:180px;
 }
 
 button{
-    padding: 8px 16px;
-    margin: 5px;
-    cursor: pointer;
+    padding:8px 16px;
+    margin:5px;
+    cursor:pointer;
 }
 
 .receipt-wrapper{
-    width: 210mm;
-    min-height: 297mm;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
+    width:210mm;
+    min-height:297mm;
+    display:flex;
+    justify-content:center;
+    padding:20px;
+    box-sizing:border-box;
 }
 
 .receipt{
-    width: 180mm;
-    min-height: 250mm;
-    border: 1px solid black;
-    padding: 20px;
-    box-sizing: border-box;
-    background: white;
+    width:180mm;
+    min-height:250mm;
+    border:1px solid black;
+    padding:20px;
+    box-sizing:border-box;
+    background:white;
 }
 
 .top-info{
-    font-size: 18px;
-    line-height: 34px;
-    margin-bottom: 50px;
+    font-size:18px;
+    line-height:34px;
+    margin-bottom:50px;
 }
 
 .title{
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    text-decoration: underline;
-    margin-bottom: 50px;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:50px;
 }
 
 .content-block{
-    font-size: 18px;
-    line-height: 42px;
-    min-height: 160px;
-}
-
-.month-line,
-.date-line{
-    display: inline-block;
-    border-bottom: 1px dotted black;
-    text-align: center;
-    padding: 0 10px;
+    font-size:18px;
+    line-height:42px;
+    min-height:160px;
 }
 
 .month-line{
-    min-width: 120px;
+    display:inline-block;
+    border-bottom:1px dotted black;
+    min-width:120px;
+    text-align:center;
 }
 
-.date-line{
-    min-width: 80px;
+.year-line{
+    display:inline-block;
+    border-bottom:1px dotted black;
+    min-width:80px;
+    text-align:center;
 }
 
+/* Stamp Section */
 .stamp-section{
-    margin-top: 70px;
-    position: relative;
-    min-height: 90px;
+    margin-top:70px;
+    position:relative;
+    min-height:90px;
 }
 
 .stamp-overlay-box{
-    position: relative;
-    display: inline-block;
+    position:relative;
+    display:inline-block;
 }
 
 .stamp{
-    width: 2cm;
-    height: 2.5cm;
-    position: absolute;
-    top: -10px;
-    left: 150px;
-    z-index: 2;
-    opacity: 0.98;
+    width:2cm;
+    height:2.5cm;
+    position:absolute;
+    top:-10px;
+    left:150px;
+    z-index:2;
     transform: rotate(-4deg);
+    opacity:0.98;
 }
 
 .stamp-text{
-    font-size: 18px;
-    position: relative;
-    z-index: 1;
-    padding-top: 30px;
+    font-size:18px;
+    position:relative;
+    z-index:1;
+    padding-top:30px;
 }
 
+/* Signatures */
 .signature-row{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 90px;
+    display:flex;
+    justify-content:space-between;
+    margin-top:80px;
 }
 
 .signature-box{
-    width: 45%;
-    text-align: center;
+    width:45%;
+    text-align:center;
 }
 
 .signature-line{
-    height: 70px;
+    height:70px;
 }
 
 .signature-label{
-    font-size: 18px;
-    margin-top: 10px;
+    font-size:18px;
+    margin-top:10px;
 }
 
 .signature-img{
-    max-width: 180px;
-    max-height: 70px;
+    max-width:180px;
+    max-height:70px;
 }
 
 .footer-details{
-    margin-top: 60px;
-    font-size: 18px;
-    line-height: 36px;
+    margin-top:60px;
+    font-size:18px;
+    line-height:36px;
 }
 
 @media print{
     .controls{
-        display: none;
+        display:none;
     }
 }
 </style>
@@ -159,170 +159,141 @@ button{
     <input type="text" id="employeeNumber" placeholder="Employee Number">
     <input type="text" id="employeePhone" placeholder="Employee Phone">
     <input type="text" id="driverPhone" placeholder="Driver Phone">
-    <input type="text" id="txnRef" placeholder="Transaction Reference">
+    <input type="text" id="txnRef" placeholder="Transaction Ref">
     <input type="date" id="date">
+
     <br><br>
 
-    <label>Driver Signature:</label>
+    Driver Signature:
     <input type="file" id="driverSignatureUpload" accept="image/*">
 
-    <label>Employee Signature:</label>
+    Employee Signature:
     <input type="file" id="employeeSignatureUpload" accept="image/*">
 
     <br><br>
+
     <button onclick="generate()">Generate</button>
     <button onclick="downloadPDF()">Download PDF</button>
 </div>
 
 <div id="receiptArea" class="receipt-wrapper">
-    <div class="receipt">
+<div class="receipt">
 
-        <div class="top-info">
-            <div>
-                EMPLOYEE NAME: <span id="rEmployeeNameTop"></span>
-            </div>
-            <div>
-                EMPLOYEE NUMBER:
-                <span id="rEmployeeNumber"></span> /
-                <span id="rEmployeePhone"></span>
-            </div>
+    <div class="top-info">
+        <div>EMPLOYEE NAME: <span id="rEmployeeNameTop"></span></div>
+        <div>
+            EMPLOYEE NUMBER:
+            <span id="rEmployeeNumber"></span> /
+            <span id="rEmployeePhone"></span>
         </div>
-
-        <div class="title">Driver Receipt</div>
-
-        <div class="content-block">
-            <p>
-                Received a sum of ₹<span id="rAmount"></span>
-                (<b><i id="rAmountWords"></i></b>)
-            </p>
-
-            <p>
-                towards the salary for the month of
-                <span class="month-line" id="rMonth"></span>
-                /
-                <span class="date-line" id="rYear"></span>
-                (month/year)
-                from
-            </p>
-
-            <p>
-                <b>Mr : <span id="rEmployeeName"></span></b>
-            </p>
-        </div>
-
-        <div class="stamp-section">
-            <div class="stamp-overlay-box">
-                <img src="stamp.png" class="stamp">
-                <div class="stamp-text">
-                    (Affix Revenue Stamp of ₹1/-)
-                </div>
-            </div>
-        </div>
-
-        <div class="signature-row">
-            <div class="signature-box">
-                <div class="signature-line">
-                    <img id="driverSignaturePreview" class="signature-img">
-                </div>
-                <div class="signature-label">
-                    SIGNATURE OF THE DRIVER
-                </div>
-            </div>
-
-            <div class="signature-box">
-                <div class="signature-line">
-                    <img id="employeeSignaturePreview" class="signature-img">
-                </div>
-                <div class="signature-label">
-                    SIGNATURE OF THE EMPLOYEE
-                </div>
-            </div>
-        </div>
-
-        <div class="footer-details">
-            <p>Driver Name : <b><span id="rDriverName"></span></b></p>
-            <p>Phone Number DRIVER * : <span id="rDriverPhone"></span></p>
-            <p>Transaction Reference Number: <span id="rTxnRef"></span></p>
-        </div>
-
     </div>
+
+    <div class="title">Driver Receipt</div>
+
+    <div class="content-block">
+        <p>
+            Received a sum of ₹<span id="rAmount"></span>
+            (<b><i id="rAmountWords"></i></b>)
+        </p>
+
+        <p>
+            towards the salary for the month of
+            <span class="month-line" id="rMonth"></span> /
+            <span class="year-line" id="rYear"></span>
+            (month/year)
+            from
+        </p>
+
+        <p>
+            <b>Mr : <span id="rEmployeeName"></span></b>
+        </p>
+    </div>
+
+    <!-- Stamp Section -->
+    <div class="stamp-section">
+        <div class="stamp-overlay-box">
+            <img src="stamp.png" class="stamp">
+            <div class="stamp-text">
+                (Affix Revenue Stamp of ₹1/-)
+            </div>
+        </div>
+    </div>
+
+    <!-- Signatures -->
+    <div class="signature-row">
+        <div class="signature-box">
+            <div class="signature-line">
+                <img id="driverSignaturePreview" class="signature-img">
+            </div>
+            <div class="signature-label">SIGNATURE OF THE DRIVER</div>
+        </div>
+
+        <div class="signature-box">
+            <div class="signature-line">
+                <img id="employeeSignaturePreview" class="signature-img">
+            </div>
+            <div class="signature-label">SIGNATURE OF THE EMPLOYEE</div>
+        </div>
+    </div>
+
+    <div class="footer-details">
+        <p>Driver Name : <b><span id="rDriverName"></span></b></p>
+        <p>Phone Number DRIVER * : <span id="rDriverPhone"></span></p>
+        <p>Transaction Reference Number: <span id="rTxnRef"></span></p>
+    </div>
+
+</div>
 </div>
 
 <script>
-window.onload = function(){
-    const today = new Date();
-    document.getElementById("date").valueAsDate = today;
+window.onload=function(){
+    const today=new Date();
+    document.getElementById("date").valueAsDate=today;
     convertToWords();
     generate();
 }
 
 function generate(){
-    const d = new Date(document.getElementById("date").value);
+    const d=new Date(document.getElementById("date").value);
 
-    document.getElementById("rDriverName").textContent =
-        document.getElementById("driverName").value;
+    rDriverName.textContent=driverName.value;
+    rAmount.textContent=amount.value;
+    rEmployeeName.textContent=employeeName.value;
+    rEmployeeNameTop.textContent=employeeName.value;
+    rEmployeeNumber.textContent=employeeNumber.value;
+    rEmployeePhone.textContent=employeePhone.value;
+    rDriverPhone.textContent=driverPhone.value;
+    rTxnRef.textContent=txnRef.value;
 
-    document.getElementById("rAmount").textContent =
-        document.getElementById("amount").value;
-
-    document.getElementById("rEmployeeName").textContent =
-        document.getElementById("employeeName").value;
-
-    document.getElementById("rEmployeeNameTop").textContent =
-        document.getElementById("employeeName").value;
-
-    document.getElementById("rEmployeeNumber").textContent =
-        document.getElementById("employeeNumber").value;
-
-    document.getElementById("rEmployeePhone").textContent =
-        document.getElementById("employeePhone").value;
-
-    document.getElementById("rDriverPhone").textContent =
-        document.getElementById("driverPhone").value;
-
-    document.getElementById("rTxnRef").textContent =
-        document.getElementById("txnRef").value;
-
-    document.getElementById("rMonth").textContent =
-        d.toLocaleString('en-IN', { month: 'long' });
-
-    document.getElementById("rYear").textContent =
-        d.getFullYear();
+    rMonth.textContent=d.toLocaleString('en-IN',{month:'long'});
+    rYear.textContent=d.getFullYear();
 }
 
-document.getElementById("driverSignatureUpload")
-.addEventListener("change", function(e){
-    const file = e.target.files[0];
+driverSignatureUpload.onchange=function(e){
+    const file=e.target.files[0];
     if(file){
-        const reader = new FileReader();
-        reader.onload = function(ev){
-            document.getElementById("driverSignaturePreview").src =
-                ev.target.result;
-        }
+        const reader=new FileReader();
+        reader.onload=ev=>{
+            driverSignaturePreview.src=ev.target.result;
+        };
         reader.readAsDataURL(file);
     }
-});
+};
 
-document.getElementById("employeeSignatureUpload")
-.addEventListener("change", function(e){
-    const file = e.target.files[0];
+employeeSignatureUpload.onchange=function(e){
+    const file=e.target.files[0];
     if(file){
-        const reader = new FileReader();
-        reader.onload = function(ev){
-            document.getElementById("employeeSignaturePreview").src =
-                ev.target.result;
-        }
+        const reader=new FileReader();
+        reader.onload=ev=>{
+            employeeSignaturePreview.src=ev.target.result;
+        };
         reader.readAsDataURL(file);
     }
-});
+};
 
 function convertToWords(){
-    const num = parseInt(document.getElementById("amount").value);
-
-    if(!num){
-        document.getElementById("rAmountWords").textContent = "";
-        return;
-    }
+    const num=parseInt(amount.value);
+    if(!num) return;
 
     const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
     const b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
@@ -336,8 +307,7 @@ function convertToWords(){
         return words(Math.floor(n/10000000))+" Crore "+words(n%10000000);
     }
 
-    document.getElementById("rAmountWords").textContent =
-        words(num) + " only";
+    rAmountWords.textContent=words(num)+" only";
 }
 
 function downloadPDF(){
