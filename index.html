@@ -9,6 +9,7 @@
 body{
     font-family: Arial, sans-serif;
     margin:0;
+    background:white;
 }
 
 .controls{
@@ -33,15 +34,15 @@ button{
     min-height:297mm;
     display:flex;
     justify-content:center;
-    padding:20px;
+    padding:10mm;
     box-sizing:border-box;
 }
 
 .receipt{
-    width:180mm;
-    min-height:250mm;
+    width:185mm;
+    min-height:267mm;
     border:1px solid black;
-    padding:20px;
+    padding:12mm;
     box-sizing:border-box;
     background:white;
 }
@@ -49,7 +50,7 @@ button{
 .top-info{
     font-size:18px;
     line-height:34px;
-    margin-bottom:50px;
+    margin-bottom:35px;
 }
 
 .title{
@@ -57,64 +58,60 @@ button{
     font-size:22px;
     font-weight:bold;
     text-decoration:underline;
-    margin-bottom:50px;
+    margin-bottom:40px;
 }
 
 .content-block{
     font-size:18px;
     line-height:42px;
-    min-height:160px;
+    min-height:140px;
 }
 
-.month-line{
-    display:inline-block;
-    border-bottom:1px dotted black;
-    min-width:120px;
-    text-align:center;
-}
-
+.month-line,
 .year-line{
     display:inline-block;
     border-bottom:1px dotted black;
-    min-width:80px;
     text-align:center;
+    vertical-align:bottom;
 }
 
-/* Stamp Section */
+.month-line{
+    min-width:120px;
+}
+
+.year-line{
+    min-width:70px;
+}
+
+/* stamp area refined */
 .stamp-section{
-    margin-top:70px;
+    margin-top:50px;
     position:relative;
-    min-height:90px;
+    min-height:95px;
 }
 
-.stamp-overlay-box{
+.stamp-text{
+    font-size:18px;
+    padding-top:28px;
     position:relative;
-    display:inline-block;
+    z-index:1;
 }
 
 .stamp{
     width:2cm;
     height:2.5cm;
     position:absolute;
-    top:-10px;
-    left:150px;
-    z-index:2;
-    transform: rotate(-4deg);
-    opacity:0.98;
+    left:145px;
+    top:-5px;
+    z-index:3;
 }
 
-.stamp-text{
-    font-size:18px;
-    position:relative;
-    z-index:1;
-    padding-top:30px;
-}
-
-/* Signatures */
+/* signatures refined */
 .signature-row{
     display:flex;
     justify-content:space-between;
-    margin-top:80px;
+    margin-top:50px;
+    align-items:flex-end;
 }
 
 .signature-box{
@@ -124,27 +121,38 @@ button{
 
 .signature-line{
     height:70px;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
 }
 
 .signature-label{
-    font-size:18px;
-    margin-top:10px;
+    font-size:17px;
+    margin-top:8px;
 }
 
 .signature-img{
     max-width:180px;
-    max-height:70px;
+    max-height:65px;
 }
 
 .footer-details{
-    margin-top:60px;
+    margin-top:45px;
     font-size:18px;
-    line-height:36px;
+    line-height:34px;
 }
 
 @media print{
     .controls{
         display:none;
+    }
+
+    body{
+        margin:0;
+    }
+
+    .receipt-wrapper{
+        padding:0;
     }
 }
 </style>
@@ -209,30 +217,30 @@ button{
         </p>
     </div>
 
-    <!-- Stamp Section -->
     <div class="stamp-section">
-        <div class="stamp-overlay-box">
-            <img src="stamp.png" class="stamp">
-            <div class="stamp-text">
-                (Affix Revenue Stamp of ₹1/-)
-            </div>
+        <img src="stamp.png" class="stamp">
+        <div class="stamp-text">
+            (Affix Revenue Stamp of ₹1/-)
         </div>
     </div>
 
-    <!-- Signatures -->
     <div class="signature-row">
         <div class="signature-box">
             <div class="signature-line">
                 <img id="driverSignaturePreview" class="signature-img">
             </div>
-            <div class="signature-label">SIGNATURE OF THE DRIVER</div>
+            <div class="signature-label">
+                SIGNATURE OF THE DRIVER
+            </div>
         </div>
 
         <div class="signature-box">
             <div class="signature-line">
                 <img id="employeeSignaturePreview" class="signature-img">
             </div>
-            <div class="signature-label">SIGNATURE OF THE EMPLOYEE</div>
+            <div class="signature-label">
+                SIGNATURE OF THE EMPLOYEE
+            </div>
         </div>
     </div>
 
@@ -314,7 +322,7 @@ function downloadPDF(){
     html2pdf().set({
         margin:0,
         filename:"Driver_Receipt.pdf",
-        html2canvas:{ scale:2 },
+        html2canvas:{ scale:2, useCORS:true },
         jsPDF:{ unit:'mm', format:'a4', orientation:'portrait' }
     }).from(document.getElementById("receiptArea")).save();
 }
