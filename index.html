@@ -8,123 +8,143 @@
 <style>
 body{
     font-family: Arial, sans-serif;
-    margin:0;
+    margin: 0;
 }
 
 .controls{
-    text-align:center;
-    margin:20px;
+    text-align: center;
+    margin: 20px;
 }
 
 input{
-    padding:6px;
-    margin:5px;
-    width:180px;
+    padding: 6px;
+    margin: 5px;
+    width: 180px;
 }
 
 button{
-    padding:8px 16px;
-    margin:5px;
-    cursor:pointer;
+    padding: 8px 16px;
+    margin: 5px;
+    cursor: pointer;
 }
 
 .receipt-wrapper{
-    width:210mm;
-    min-height:297mm;
-    display:flex;
-    justify-content:center;
-    padding:20px;
-    box-sizing:border-box;
+    width: 210mm;
+    min-height: 297mm;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 .receipt{
-    width:180mm;
-    min-height:250mm;
-    border:1px solid black;
-    padding:20px;
-    box-sizing:border-box;
-    background:white;
+    width: 180mm;
+    min-height: 250mm;
+    border: 1px solid black;
+    padding: 20px;
+    box-sizing: border-box;
+    background: white;
 }
 
 .top-info{
-    font-size:18px;
-    line-height:34px;
-    margin-bottom:50px;
+    font-size: 18px;
+    line-height: 34px;
+    margin-bottom: 50px;
 }
 
 .title{
-    text-align:center;
-    font-size:22px;
-    font-weight:bold;
-    text-decoration:underline;
-    margin-bottom:50px;
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    text-decoration: underline;
+    margin-bottom: 50px;
 }
 
 .content-block{
-    font-size:18px;
-    line-height:42px;
-    min-height:160px;
+    font-size: 18px;
+    line-height: 42px;
+    min-height: 160px;
+}
+
+.month-line,
+.date-line{
+    display: inline-block;
+    border-bottom: 1px dotted black;
+    text-align: center;
+    padding: 0 10px;
 }
 
 .month-line{
-    display:inline-block;
-    border-bottom:1px dotted black;
-    min-width:120px;
-    text-align:center;
+    min-width: 120px;
 }
 
 .date-line{
-    display:inline-block;
-    border-bottom:1px dotted black;
-    min-width:80px;
-    text-align:center;
+    min-width: 80px;
 }
 
 .stamp-section{
-    margin-top:70px;
-    text-align:left;
+    margin-top: 70px;
+    position: relative;
+    min-height: 90px;
+}
+
+.stamp-overlay-box{
+    position: relative;
+    display: inline-block;
 }
 
 .stamp{
-    width:90px;
-    display:block;
-    margin-bottom:10px;
+    width: 2cm;
+    height: 2.5cm;
+    position: absolute;
+    top: -10px;
+    left: 150px;
+    z-index: 2;
+    opacity: 0.98;
+    transform: rotate(-4deg);
+}
+
+.stamp-text{
+    font-size: 18px;
+    position: relative;
+    z-index: 1;
+    padding-top: 30px;
 }
 
 .signature-row{
-    display:flex;
-    justify-content:space-between;
-    margin-top:80px;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 90px;
 }
 
 .signature-box{
-    width:45%;
-    text-align:center;
+    width: 45%;
+    text-align: center;
 }
 
 .signature-line{
-    height:70px;
+    height: 70px;
 }
 
 .signature-label{
-    font-size:18px;
-    margin-top:10px;
+    font-size: 18px;
+    margin-top: 10px;
 }
 
 .signature-img{
-    max-width:180px;
-    max-height:70px;
+    max-width: 180px;
+    max-height: 70px;
 }
 
 .footer-details{
-    margin-top:60px;
-    font-size:18px;
-    line-height:36px;
+    margin-top: 60px;
+    font-size: 18px;
+    line-height: 36px;
 }
 
 @media print{
     .controls{
-        display:none;
+        display: none;
     }
 }
 </style>
@@ -137,11 +157,12 @@ button{
     <input type="number" id="amount" value="25000" oninput="convertToWords()">
     <input type="text" id="employeeName" placeholder="Employee Name">
     <input type="text" id="employeeNumber" placeholder="Employee Number">
-    <input type="text" id="employeePhone" placeholder="Employee Phone Number">
+    <input type="text" id="employeePhone" placeholder="Employee Phone">
     <input type="text" id="driverPhone" placeholder="Driver Phone">
     <input type="text" id="txnRef" placeholder="Transaction Reference">
     <input type="date" id="date">
     <br><br>
+
     <label>Driver Signature:</label>
     <input type="file" id="driverSignatureUpload" accept="image/*">
 
@@ -160,7 +181,6 @@ button{
             <div>
                 EMPLOYEE NAME: <span id="rEmployeeNameTop"></span>
             </div>
-
             <div>
                 EMPLOYEE NUMBER:
                 <span id="rEmployeeNumber"></span> /
@@ -191,8 +211,12 @@ button{
         </div>
 
         <div class="stamp-section">
-            <img src="stamp.png" class="stamp">
-            (Affix Revenue Stamp of ₹1/-)
+            <div class="stamp-overlay-box">
+                <img src="stamp.png" class="stamp">
+                <div class="stamp-text">
+                    (Affix Revenue Stamp of ₹1/-)
+                </div>
+            </div>
         </div>
 
         <div class="signature-row">
