@@ -8,104 +8,123 @@
 <style>
 body{
     font-family: Arial, sans-serif;
-    margin: 0;
+    margin:0;
 }
 
 .controls{
-    text-align: center;
-    margin: 20px;
+    text-align:center;
+    margin:20px;
 }
 
 input{
-    padding: 6px;
-    margin: 5px;
-    width: 180px;
+    padding:6px;
+    margin:5px;
+    width:180px;
 }
 
 button{
-    padding: 8px 16px;
-    cursor: pointer;
-    margin: 5px;
+    padding:8px 16px;
+    margin:5px;
+    cursor:pointer;
 }
 
 .receipt-wrapper{
-    width: 210mm;
-    min-height: 297mm;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
+    width:210mm;
+    min-height:297mm;
+    display:flex;
+    justify-content:center;
+    padding:20px;
+    box-sizing:border-box;
 }
 
 .receipt{
-    width: 180mm;
-    min-height: 250mm;
-    border: 1px solid black;
-    padding: 20px;
-    box-sizing: border-box;
-    background: white;
+    width:180mm;
+    min-height:250mm;
+    border:1px solid black;
+    padding:20px;
+    box-sizing:border-box;
+    background:white;
 }
 
 .top-info{
-    font-size: 18px;
-    line-height: 32px;
-    margin-bottom: 50px;
+    font-size:18px;
+    line-height:34px;
+    margin-bottom:50px;
 }
 
 .title{
-    text-align: center;
-    font-size: 22px;
-    font-weight: bold;
-    text-decoration: underline;
-    margin-bottom: 50px;
+    text-align:center;
+    font-size:22px;
+    font-weight:bold;
+    text-decoration:underline;
+    margin-bottom:50px;
 }
 
 .content-block{
-    font-size: 18px;
-    line-height: 42px;
-    min-height: 180px;
+    font-size:18px;
+    line-height:42px;
+    min-height:160px;
 }
 
-.stamp-note{
-    margin-top: 80px;
-    font-size: 18px;
+.month-line{
+    display:inline-block;
+    border-bottom:1px dotted black;
+    min-width:120px;
+    text-align:center;
+}
+
+.date-line{
+    display:inline-block;
+    border-bottom:1px dotted black;
+    min-width:80px;
+    text-align:center;
+}
+
+.stamp-section{
+    margin-top:70px;
+    text-align:left;
+}
+
+.stamp{
+    width:90px;
+    display:block;
+    margin-bottom:10px;
 }
 
 .signature-row{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 100px;
+    display:flex;
+    justify-content:space-between;
+    margin-top:80px;
 }
 
 .signature-box{
-    width: 45%;
-    text-align: center;
+    width:45%;
+    text-align:center;
 }
 
 .signature-line{
-    height: 60px;
-    position: relative;
+    height:70px;
 }
 
 .signature-label{
-    font-size: 18px;
-    margin-top: 10px;
+    font-size:18px;
+    margin-top:10px;
 }
 
 .signature-img{
-    max-width: 180px;
-    max-height: 60px;
+    max-width:180px;
+    max-height:70px;
 }
 
 .footer-details{
-    margin-top: 60px;
-    font-size: 18px;
-    line-height: 36px;
+    margin-top:60px;
+    font-size:18px;
+    line-height:36px;
 }
 
 @media print{
     .controls{
-        display: none;
+        display:none;
     }
 }
 </style>
@@ -118,10 +137,17 @@ button{
     <input type="number" id="amount" value="25000" oninput="convertToWords()">
     <input type="text" id="employeeName" placeholder="Employee Name">
     <input type="text" id="employeeNumber" placeholder="Employee Number">
+    <input type="text" id="employeePhone" placeholder="Employee Phone Number">
     <input type="text" id="driverPhone" placeholder="Driver Phone">
     <input type="text" id="txnRef" placeholder="Transaction Reference">
-    <input type="text" id="monthYear" placeholder="Month / Year">
-    <input type="file" id="signatureUpload" accept="image/*">
+    <input type="date" id="date">
+    <br><br>
+    <label>Driver Signature:</label>
+    <input type="file" id="driverSignatureUpload" accept="image/*">
+
+    <label>Employee Signature:</label>
+    <input type="file" id="employeeSignatureUpload" accept="image/*">
+
     <br><br>
     <button onclick="generate()">Generate</button>
     <button onclick="downloadPDF()">Download PDF</button>
@@ -131,8 +157,15 @@ button{
     <div class="receipt">
 
         <div class="top-info">
-            <div>EMPLOYEE NAME: <span id="rEmployeeNameTop"></span></div>
-            <div>EMPLOYEE NUMBER: <span id="rEmployeeNumber"></span></div>
+            <div>
+                EMPLOYEE NAME: <span id="rEmployeeNameTop"></span>
+            </div>
+
+            <div>
+                EMPLOYEE NUMBER:
+                <span id="rEmployeeNumber"></span> /
+                <span id="rEmployeePhone"></span>
+            </div>
         </div>
 
         <div class="title">Driver Receipt</div>
@@ -145,7 +178,10 @@ button{
 
             <p>
                 towards the salary for the month of
-                <span id="rMonthYear"></span>
+                <span class="month-line" id="rMonth"></span>
+                /
+                <span class="date-line" id="rYear"></span>
+                (month/year)
                 from
             </p>
 
@@ -154,14 +190,15 @@ button{
             </p>
         </div>
 
-        <div class="stamp-note">
+        <div class="stamp-section">
+            <img src="stamp.png" class="stamp">
             (Affix Revenue Stamp of ₹1/-)
         </div>
 
         <div class="signature-row">
             <div class="signature-box">
                 <div class="signature-line">
-                    <img id="signaturePreview" class="signature-img">
+                    <img id="driverSignaturePreview" class="signature-img">
                 </div>
                 <div class="signature-label">
                     SIGNATURE OF THE DRIVER
@@ -169,7 +206,9 @@ button{
             </div>
 
             <div class="signature-box">
-                <div class="signature-line"></div>
+                <div class="signature-line">
+                    <img id="employeeSignaturePreview" class="signature-img">
+                </div>
                 <div class="signature-label">
                     SIGNATURE OF THE EMPLOYEE
                 </div>
@@ -188,20 +227,14 @@ button{
 <script>
 window.onload = function(){
     const today = new Date();
-
-    const options = {
-        month: 'long',
-        year: 'numeric'
-    };
-
-    document.getElementById("monthYear").value =
-        today.toLocaleDateString('en-IN', options);
-
+    document.getElementById("date").valueAsDate = today;
     convertToWords();
     generate();
 }
 
 function generate(){
+    const d = new Date(document.getElementById("date").value);
+
     document.getElementById("rDriverName").textContent =
         document.getElementById("driverName").value;
 
@@ -217,28 +250,44 @@ function generate(){
     document.getElementById("rEmployeeNumber").textContent =
         document.getElementById("employeeNumber").value;
 
+    document.getElementById("rEmployeePhone").textContent =
+        document.getElementById("employeePhone").value;
+
     document.getElementById("rDriverPhone").textContent =
         document.getElementById("driverPhone").value;
 
     document.getElementById("rTxnRef").textContent =
         document.getElementById("txnRef").value;
 
-    document.getElementById("rMonthYear").textContent =
-        document.getElementById("monthYear").value;
+    document.getElementById("rMonth").textContent =
+        d.toLocaleString('en-IN', { month: 'long' });
+
+    document.getElementById("rYear").textContent =
+        d.getFullYear();
 }
 
-document.getElementById("signatureUpload")
+document.getElementById("driverSignatureUpload")
 .addEventListener("change", function(e){
     const file = e.target.files[0];
-
     if(file){
         const reader = new FileReader();
-
         reader.onload = function(ev){
-            document.getElementById("signaturePreview").src =
+            document.getElementById("driverSignaturePreview").src =
                 ev.target.result;
         }
+        reader.readAsDataURL(file);
+    }
+});
 
+document.getElementById("employeeSignatureUpload")
+.addEventListener("change", function(e){
+    const file = e.target.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = function(ev){
+            document.getElementById("employeeSignaturePreview").src =
+                ev.target.result;
+        }
         reader.readAsDataURL(file);
     }
 });
@@ -251,27 +300,16 @@ function convertToWords(){
         return;
     }
 
-    const a = [
-        '', 'One', 'Two', 'Three', 'Four', 'Five',
-        'Six', 'Seven', 'Eight', 'Nine', 'Ten',
-        'Eleven', 'Twelve', 'Thirteen', 'Fourteen',
-        'Fifteen', 'Sixteen', 'Seventeen',
-        'Eighteen', 'Nineteen'
-    ];
-
-    const b = [
-        '', '', 'Twenty', 'Thirty', 'Forty',
-        'Fifty', 'Sixty', 'Seventy',
-        'Eighty', 'Ninety'
-    ];
+    const a=['','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten','Eleven','Twelve','Thirteen','Fourteen','Fifteen','Sixteen','Seventeen','Eighteen','Nineteen'];
+    const b=['','','Twenty','Thirty','Forty','Fifty','Sixty','Seventy','Eighty','Ninety'];
 
     function words(n){
-        if(n < 20) return a[n];
-        if(n < 100) return b[Math.floor(n/10)] + " " + a[n%10];
-        if(n < 1000) return a[Math.floor(n/100)] + " Hundred " + words(n%100);
-        if(n < 100000) return words(Math.floor(n/1000)) + " Thousand " + words(n%1000);
-        if(n < 10000000) return words(Math.floor(n/100000)) + " Lakh " + words(n%100000);
-        return words(Math.floor(n/10000000)) + " Crore " + words(n%10000000);
+        if(n<20) return a[n];
+        if(n<100) return b[Math.floor(n/10)]+" "+a[n%10];
+        if(n<1000) return a[Math.floor(n/100)]+" Hundred "+words(n%100);
+        if(n<100000) return words(Math.floor(n/1000))+" Thousand "+words(n%1000);
+        if(n<10000000) return words(Math.floor(n/100000))+" Lakh "+words(n%100000);
+        return words(Math.floor(n/10000000))+" Crore "+words(n%10000000);
     }
 
     document.getElementById("rAmountWords").textContent =
@@ -280,14 +318,10 @@ function convertToWords(){
 
 function downloadPDF(){
     html2pdf().set({
-        margin: 0,
-        filename: "Driver_Receipt.pdf",
-        html2canvas: { scale: 2 },
-        jsPDF: {
-            unit: 'mm',
-            format: 'a4',
-            orientation: 'portrait'
-        }
+        margin:0,
+        filename:"Driver_Receipt.pdf",
+        html2canvas:{ scale:2 },
+        jsPDF:{ unit:'mm', format:'a4', orientation:'portrait' }
     }).from(document.getElementById("receiptArea")).save();
 }
 </script>
